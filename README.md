@@ -23,7 +23,17 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+To apply an xml patch to an xml string:
+
+``` ruby
+require 'xml_patch'
+
+patch = '<remove sel="/foo" />'
+xml = '<foo /><bar />'
+
+XmlPatch.apply(patch).to(xml)
+# => "<bar />"
+```
 
 ## Development
 
