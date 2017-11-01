@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/iainbeeston/xml_patch.svg?branch=master)](https://travis-ci.org/iainbeeston/xml_patch)
 [![Maintainability](https://api.codeclimate.com/v1/badges/048c9e7b3b129c80a2e0/maintainability)](https://codeclimate.com/github/iainbeeston/xml_patch/maintainability)
 
-An implementation of XML Patch (RFC5261) in ruby.
+An implementation of [XML Patch (RFC5261)](https://tools.ietf.org/html/rfc5261) in ruby.
 
 ## Installation
 
@@ -34,6 +34,17 @@ xml = '<foo /><bar />'
 XmlPatch.apply(patch).to(xml)
 # => "<bar />"
 ```
+
+## Limitations
+
+So far this implementation supports:
+
+* `<remove>` elements
+
+But not:
+
+* `<add>` elements
+* `<replace>` elements
 
 ## Development
 
