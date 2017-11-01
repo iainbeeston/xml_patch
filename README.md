@@ -1,5 +1,8 @@
 # XmlPatch
 
+[![Build Status](https://travis-ci.org/iainbeeston/xml_patch.svg?branch=master)](https://travis-ci.org/iainbeeston/xml_patch)
+[![Maintainability](https://api.codeclimate.com/v1/badges/048c9e7b3b129c80a2e0/maintainability)](https://codeclimate.com/github/iainbeeston/xml_patch/maintainability)
+
 An implementation of XML Patch (RFC5261) in ruby.
 
 ## Installation
