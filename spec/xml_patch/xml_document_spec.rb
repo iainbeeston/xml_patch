@@ -1,9 +1,9 @@
 require 'spec_helper'
-require 'xml_patch/target_document'
+require 'xml_patch/xml_document'
 require 'xml_patch/errors/invalid_xml'
 require 'xml_patch/errors/invalid_xpath'
 
-RSpec.describe XmlPatch::TargetDocument do
+RSpec.describe XmlPatch::XmlDocument do
   describe 'new' do
     it 'raises an error if not given valid xml' do
       expect {

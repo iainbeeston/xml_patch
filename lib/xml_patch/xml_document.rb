@@ -3,7 +3,7 @@ require 'xml_patch/errors/invalid_xml'
 require 'xml_patch/errors/invalid_xpath'
 
 module XmlPatch
-  class TargetDocument
+  class XmlDocument
     def initialize(xml)
       @xml = Oga.parse_xml(xml)
     rescue LL::ParserError => e

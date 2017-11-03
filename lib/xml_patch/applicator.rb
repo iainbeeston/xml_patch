@@ -1,5 +1,5 @@
 require 'xml_patch/diff_builder'
-require 'xml_patch/target_document'
+require 'xml_patch/xml_document'
 
 module XmlPatch
   class Applicator
@@ -11,7 +11,7 @@ module XmlPatch
 
     def to(target_xml)
       diff = XmlPatch::DiffBuilder.new.parse(diff_xml).diff_document
-      target = XmlPatch::TargetDocument.new(target_xml)
+      target = XmlPatch::XmlDocument.new(target_xml)
       diff.apply_to(target)
       target.to_xml
     end
