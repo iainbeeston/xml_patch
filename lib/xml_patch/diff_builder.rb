@@ -13,9 +13,8 @@ module XmlPatch
       diff_document << XmlPatch::Operations::Remove.new(sel: xpath)
     end
 
-    def parse(xml)
-      diff = XmlDocument.new(xml)
-      diff.parse do |name, attrs|
+    def parse(patch)
+      patch.parse do |name, attrs|
         case name
         when 'remove' then remove(attrs['sel'])
         end
