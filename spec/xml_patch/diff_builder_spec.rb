@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'xml_patch/diff_builder'
 require 'xml_patch/diff_document'
+require 'xml_patch/xml_document'
 require 'xml_patch/operations/remove'
 
 RSpec.describe XmlPatch::DiffBuilder do
@@ -18,11 +19,12 @@ RSpec.describe XmlPatch::DiffBuilder do
   end
 
   describe 'parse' do
-    it 'does nothing when given an empty string' do
+    it 'does nothing when given an empty xml document' do
       diff = XmlPatch::DiffDocument.new
 
+      patch = XmlPatch::XmlDocument.new('')
       builder = described_class.new
-      builder.parse('')
+      builder.parse(patch)
 
       expect(builder.diff_document).to eq(diff)
     end
@@ -30,14 +32,15 @@ RSpec.describe XmlPatch::DiffBuilder do
     it 'ignores any unrecognised xml tags' do
       diff = XmlPatch::DiffDocument.new
 
+      patch = XmlPatch::XmlDocument.new('<foo />')
       builder = described_class.new
-      builder.parse('<foo />')
+      builder.parse(patch)
 
       expect(builder.diff_document).to eq(diff)
     end
 
     it 'calls remove for each <remove> in the input' do
-      xml = <<-XML
+      patch = XmlPatch::XmlDocument.new <<-XML
         <remove sel="/foo/bar" />
         <remove sel="/baz/qux" />
       XML
@@ -45,7 +48,7 @@ RSpec.describe XmlPatch::DiffBuilder do
       builder = described_class.new
       allow(builder).to receive(:remove)
 
-      builder.parse(xml)
+      builder.parse(patch)
 
       expect(builder).to have_received(:remove).with('/foo/bar').ordered
       expect(builder).to have_received(:remove).with('/baz/qux').ordered
