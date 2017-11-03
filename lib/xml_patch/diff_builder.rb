@@ -1,4 +1,3 @@
-require 'oga'
 require 'xml_patch/diff_document'
 require 'xml_patch/operations/remove'
 
@@ -15,25 +14,13 @@ module XmlPatch
     end
 
     def parse(xml)
-      handler = SaxHandler.new(self)
-      Oga.sax_parse_xml(handler, xml)
-      self
-    end
-
-    class SaxHandler
-      attr_reader :builder
-
-      def initialize(builder)
-        @builder = builder
-      end
-
-      def on_element(_namespace, name, attrs = {})
+      diff = XmlDocument.new(xml)
+      diff.parse do |name, attrs|
         case name
-        when 'remove' then builder.remove(attrs['sel'])
+        when 'remove' then remove(attrs['sel'])
         end
       end
+      self
     end
-
-    private_constant :SaxHandler
   end
 end

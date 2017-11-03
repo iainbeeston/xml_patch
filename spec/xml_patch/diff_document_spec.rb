@@ -1,6 +1,6 @@
 require 'spec_helper'
 require 'xml_patch/diff_document'
-require 'xml_patch/target_document'
+require 'xml_patch/xml_document'
 
 RSpec.describe XmlPatch::DiffDocument do
   it 'is enumerable' do
@@ -42,7 +42,7 @@ RSpec.describe XmlPatch::DiffDocument do
 
   describe 'apply_to' do
     it 'applies each of the operations in order' do
-      doc = XmlPatch::TargetDocument.new('')
+      doc = XmlPatch::XmlDocument.new('')
 
       op1 = double('op1')
       allow(op1).to receive(:apply_to)
@@ -59,7 +59,7 @@ RSpec.describe XmlPatch::DiffDocument do
     end
 
     it 'returns the input document' do
-      doc = XmlPatch::TargetDocument.new('')
+      doc = XmlPatch::XmlDocument.new('')
       diff = described_class.new
       expect(diff.apply_to(doc)).to be(doc)
     end

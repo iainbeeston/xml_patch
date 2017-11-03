@@ -1,21 +1,19 @@
 require 'spec_helper'
-require 'xml_patch/target_document'
+require 'xml_patch/xml_document'
 require 'xml_patch/errors/invalid_xml'
 require 'xml_patch/errors/invalid_xpath'
 
-RSpec.describe XmlPatch::TargetDocument do
-  describe 'new' do
-    it 'raises an error if not given valid xml' do
-      expect {
-        described_class.new('<x:y:z></z>')
-      }.to raise_error(XmlPatch::Errors::InvalidXml)
-    end
-  end
-
+RSpec.describe XmlPatch::XmlDocument do
   describe 'to_xml' do
     it 'is the current state of the document' do
       doc = described_class.new('<foo><bar /></foo>')
       expect(doc.to_xml).to eq('<foo><bar /></foo>')
+    end
+
+    it 'raises an error if not given valid xml' do
+      expect {
+        described_class.new('<x:y:z></z>').to_xml
+      }.to raise_error(XmlPatch::Errors::InvalidXml)
     end
   end
 
@@ -93,6 +91,22 @@ RSpec.describe XmlPatch::TargetDocument do
           doc.remove_at!('//////////')
         }.to raise_error(XmlPatch::Errors::InvalidXpath)
       end
+    end
+  end
+
+  describe 'parse' do
+    it 'yields once for every xml node in the document' do
+      doc = described_class.new('<foo x="1" y="2"><bar z="A"/></foo><baz />')
+      expect { |b|
+        doc.parse(&b)
+      }.to yield_successive_args(['foo', { 'x' => '1', 'y' => '2' }],
+                                 ['bar', { 'z' => 'A' }],
+                                 ['baz', {}])
+    end
+
+    it 'returns nil' do
+      doc = described_class.new('<foo />')
+      expect(doc.parse {}).to eq(nil)
     end
   end
 end
