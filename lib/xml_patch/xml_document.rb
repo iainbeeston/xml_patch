@@ -13,23 +13,17 @@ module XmlPatch
     end
 
     def remove_at!(xpath)
-      nodes = []
-
-      begin
-        nodes = xml_dom.xpath(xpath)
-      rescue LL::ParserError => e
-        raise XmlPatch::Errors::InvalidXpath, e.message
-      end
-
-      nodes.each { |n| remove_node(n) }
+      nodes_at(xpath).each { |n| remove_node(n) }
 
       self
     end
 
-    def parse(&blk)
-      handler = SaxHandler.new(&blk)
-      Oga.sax_parse_xml(handler, xml)
-      nil
+    def get_at(xpath)
+      if block_given?
+        nodes_at(xpath).each { |n| yield(n.name, node_attributes(n)) }
+      end
+
+      self
     end
 
     private
@@ -50,18 +44,18 @@ module XmlPatch
       end
     end
 
-    class SaxHandler
-      attr_reader :block
-
-      def initialize(&block)
-        @block = block
-      end
-
-      def on_element(_namespace, name, attrs = {})
-        block.call(name, attrs)
+    def nodes_at(xpath)
+      begin
+        return xml_dom.xpath(xpath)
+      rescue LL::ParserError => e
+        raise XmlPatch::Errors::InvalidXpath, e.message
       end
     end
 
-    private_constant :SaxHandler
+    def node_attributes(node)
+      node.attributes.each_with_object({}) do |attr, hsh|
+        hsh[attr.name] = attr.value
+      end
+    end
   end
 end

@@ -94,19 +94,32 @@ RSpec.describe XmlPatch::XmlDocument do
     end
   end
 
-  describe 'parse' do
-    it 'yields once for every xml node in the document' do
-      doc = described_class.new('<foo x="1" y="2"><bar z="A"/></foo><baz />')
+  describe 'get_at' do
+    it 'does not yield if the xpath cannot be found' do
+      doc = described_class.new('<foo></foo>')
       expect { |b|
-        doc.parse(&b)
-      }.to yield_successive_args(['foo', { 'x' => '1', 'y' => '2' }],
-                                 ['bar', { 'z' => 'A' }],
-                                 ['baz', {}])
+        doc.get_at('/bar', &b)
+      }.to_not yield_control
     end
 
-    it 'returns nil' do
-      doc = described_class.new('<foo />')
-      expect(doc.parse {}).to eq(nil)
+    it 'yields the name and attributes of each node at that xpath' do
+      doc = described_class.new('<foo><bar x="A" /><bar x="B" /></foo>')
+      expect { |b|
+        doc.get_at('/foo/bar', &b)
+      }.to yield_successive_args(['bar', { 'x' => 'A' }],
+                                 ['bar', { 'x' => 'B' }])
+    end
+
+    it 'raises an error if the xpath is invalid' do
+      doc = described_class.new('')
+      expect {
+        doc.get_at('//////////') {}
+      }.to raise_error(XmlPatch::Errors::InvalidXpath)
+    end
+
+    it 'returns itself' do
+      doc = described_class.new('')
+      expect(doc.get_at('/')).to eq(doc)
     end
   end
 end

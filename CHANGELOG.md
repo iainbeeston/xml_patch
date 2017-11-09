@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Fixed
 - Expect patch xml to have a <diff> root node
+- Don't parse nested <remove> tags
 
 ## [0.1.0] - 2017-11-01
 ### Added
