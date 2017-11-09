@@ -27,7 +27,11 @@ module XmlPatch
     end
 
     def to_xml
-      operations.inject('') { |str, op| str + op.to_xml + "\n" }.chomp
+      if operations.empty?
+        '<diff />'
+      else
+        '<diff>' + operations.map(&:to_xml).join("\n") + '</diff>'
+      end
     end
 
     private
