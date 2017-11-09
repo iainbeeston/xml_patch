@@ -24,11 +24,21 @@ RSpec.describe XmlPatch::DiffBuilder do
   end
 
   describe 'parse' do
-    it 'does nothing when parsing the document yields nothing' do
+    it 'only gets the nodes at /diff/* from the document' do
+      patch = instance_double(XmlPatch::XmlDocument)
+      allow(patch).to receive(:get_at)
+
+      builder = described_class.new
+      builder.parse(patch)
+
+      expect(patch).to have_received(:get_at).with('/diff/*')
+    end
+
+    it 'does nothing when no xml tags are yielded by the document' do
       diff = XmlPatch::DiffDocument.new
 
       patch = instance_double(XmlPatch::XmlDocument)
-      allow(patch).to receive(:parse)
+      allow(patch).to receive(:get_at)
 
       builder = described_class.new
       builder.parse(patch)
@@ -40,7 +50,7 @@ RSpec.describe XmlPatch::DiffBuilder do
       diff = XmlPatch::DiffDocument.new
 
       patch = instance_double(XmlPatch::XmlDocument)
-      allow(patch).to receive(:parse).and_yield('foo', {})
+      allow(patch).to receive(:get_at).and_yield('foo', {})
 
       builder = described_class.new
       builder.parse(patch)
@@ -50,7 +60,7 @@ RSpec.describe XmlPatch::DiffBuilder do
 
     it 'calls remove for each remove tag yielded when parsing the document' do
       patch = instance_double(XmlPatch::XmlDocument)
-      allow(patch).to receive(:parse)
+      allow(patch).to receive(:get_at)
         .and_yield('remove', 'sel' => '/foo/bar')
         .and_yield('remove', 'sel' => '/baz/qux')
 

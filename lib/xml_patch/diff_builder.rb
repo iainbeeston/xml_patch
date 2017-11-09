@@ -14,7 +14,7 @@ module XmlPatch
     end
 
     def parse(patch)
-      patch.parse do |name, attrs|
+      patch.get_at('/diff/*') do |name, attrs|
         case name
         when 'remove' then remove(attrs['sel'])
         end
