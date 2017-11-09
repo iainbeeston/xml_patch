@@ -9,6 +9,7 @@ module XmlPatch
 
       def apply_to(doc)
         doc.remove_at!(sel)
+        doc
       end
 
       def ==(other)

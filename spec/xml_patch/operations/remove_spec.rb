@@ -26,7 +26,7 @@ RSpec.describe XmlPatch::Operations::Remove do
   describe 'apply_to' do
     it 'calls remove_at! on the document using sel' do
       op = described_class.new(sel: '/foo/bar')
-      doc = XmlPatch::XmlDocument.new('')
+      doc = instance_double(XmlPatch::XmlDocument)
       allow(doc).to receive(:remove_at!)
       op.apply_to(doc)
       expect(doc).to have_received(:remove_at!).with('/foo/bar')
@@ -34,7 +34,8 @@ RSpec.describe XmlPatch::Operations::Remove do
 
     it 'returns the input document' do
       op = described_class.new(sel: '/foo/bar')
-      doc = XmlPatch::XmlDocument.new('')
+      doc = instance_double(XmlPatch::XmlDocument)
+      allow(doc).to receive(:remove_at!)
       expect(op.apply_to(doc)).to eq(doc)
     end
   end
