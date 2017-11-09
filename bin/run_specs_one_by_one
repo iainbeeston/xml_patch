@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# inspired by the run_specs_one_by_one script in rspec-core
+
+EXIT=0
+
+echo "Running each spec file, one-by-one..."
+
+for file in `find spec -iname '*_spec.rb'`; do
+  echo "Running $file"
+  bundle exec rspec $file -b --format progress || EXIT=$?
+done
+
+exit $EXIT
