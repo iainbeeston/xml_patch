@@ -92,18 +92,18 @@ RSpec.describe XmlPatch::DiffDocument do
   end
 
   describe 'to_xml' do
-    it 'renders each of the operations to xml in order' do
+    it 'renders a patch including each of the operations in order' do
       op1 = double('op1', to_xml: '<op1 />')
       op2 = double('op1', to_xml: '<op2 />')
 
       diff = described_class.new << op1 << op2
 
-      expect(diff.to_xml).to eq("<op1 />\n<op2 />")
+      expect(diff.to_xml).to eq("<diff><op1 />\n<op2 /></diff>")
     end
 
-    it 'is an empty string if there are no operations' do
+    it 'is an empty diff tag if there are no operations' do
       diff = described_class.new
-      expect(diff.to_xml).to eq('')
+      expect(diff.to_xml).to eq('<diff />')
     end
   end
 end

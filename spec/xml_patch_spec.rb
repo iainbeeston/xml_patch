@@ -9,7 +9,7 @@ RSpec.describe XmlPatch do
 
   describe 'apply...to' do
     it 'applies the patch to the xml' do
-      patch = '<remove sel="//foo" />'
+      patch = '<diff><remove sel="//foo" /></diff>'
       doc = '<bar><baz><foo /></baz><foo /></bar><foo />'
       expect(described_class.apply(patch).to(doc)).to eq('<bar><baz /></bar>')
     end

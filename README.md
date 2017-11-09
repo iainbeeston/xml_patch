@@ -28,7 +28,7 @@ To apply an xml patch to an xml string:
 ``` ruby
 require 'xml_patch'
 
-patch = '<remove sel="/foo" />'
+patch = '<diff><remove sel="/foo" /></diff>'
 xml = '<foo /><bar />'
 
 XmlPatch.apply(patch).to(xml)
