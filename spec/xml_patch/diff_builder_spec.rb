@@ -8,42 +8,51 @@ RSpec.describe XmlPatch::DiffBuilder do
   describe 'remove' do
     it 'appends a remove operation to the diff document' do
       builder = described_class.new
+      doc = builder.diff_document
+      allow(doc).to receive(:<<)
+
       builder.remove('/foo/bar')
       builder.remove('/baz/qux')
 
-      doc = XmlPatch::DiffDocument.new \
-            << XmlPatch::Operations::Remove.new(sel: '/foo/bar') \
-            << XmlPatch::Operations::Remove.new(sel: '/baz/qux')
-      expect(builder.diff_document).to eq(doc)
+      expect(doc).to have_received(:<<).with(
+                       an_instance_of(XmlPatch::Operations::Remove).and(have_attributes(sel: '/foo/bar'))
+                     ).ordered
+      expect(doc).to have_received(:<<).with(
+                       an_instance_of(XmlPatch::Operations::Remove).and(have_attributes(sel: '/baz/qux'))
+                     ).ordered
     end
   end
 
   describe 'parse' do
-    it 'does nothing when given an empty xml document' do
+    it 'does nothing when parsing the document yields nothing' do
       diff = XmlPatch::DiffDocument.new
 
-      patch = XmlPatch::XmlDocument.new('')
+      patch = instance_double(XmlPatch::XmlDocument)
+      allow(patch).to receive(:parse)
+
       builder = described_class.new
       builder.parse(patch)
 
       expect(builder.diff_document).to eq(diff)
     end
 
-    it 'ignores any unrecognised xml tags' do
+    it 'does nothing when parsing the document yields unrecognised xml tags' do
       diff = XmlPatch::DiffDocument.new
 
-      patch = XmlPatch::XmlDocument.new('<foo />')
+      patch = instance_double(XmlPatch::XmlDocument)
+      allow(patch).to receive(:parse).and_yield('foo', {})
+
       builder = described_class.new
       builder.parse(patch)
 
       expect(builder.diff_document).to eq(diff)
     end
 
-    it 'calls remove for each <remove> in the input' do
-      patch = XmlPatch::XmlDocument.new <<-XML
-        <remove sel="/foo/bar" />
-        <remove sel="/baz/qux" />
-      XML
+    it 'calls remove for each remove tag yielded when parsing the document' do
+      patch = instance_double(XmlPatch::XmlDocument)
+      allow(patch).to receive(:parse)
+        .and_yield('remove', 'sel' => '/foo/bar')
+        .and_yield('remove', 'sel' => '/baz/qux')
 
       builder = described_class.new
       allow(builder).to receive(:remove)
