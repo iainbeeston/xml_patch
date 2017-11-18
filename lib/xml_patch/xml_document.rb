@@ -45,11 +45,9 @@ module XmlPatch
     end
 
     def nodes_at(xpath)
-      begin
-        return xml_dom.xpath(xpath)
-      rescue LL::ParserError => e
-        raise XmlPatch::Errors::InvalidXpath, e.message
-      end
+      return xml_dom.xpath(xpath)
+    rescue LL::ParserError => e
+      raise XmlPatch::Errors::InvalidXpath, e.message
     end
 
     def node_attributes(node)
