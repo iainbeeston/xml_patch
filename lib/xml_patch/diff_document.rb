@@ -30,7 +30,7 @@ module XmlPatch
       if operations.empty?
         '<diff />'
       else
-        '<diff>' + operations.map(&:to_xml).join("\n") + '</diff>'
+        "<diff>\n#{operations.map(&:to_xml).join("\n")}\n</diff>"
       end
     end
 

@@ -98,7 +98,7 @@ RSpec.describe XmlPatch::DiffDocument do
 
       diff = described_class.new << op1 << op2
 
-      expect(diff.to_xml).to eq("<diff><op1 />\n<op2 /></diff>")
+      expect(diff.to_xml).to eq("<diff>\n<op1 />\n<op2 />\n</diff>")
     end
 
     it 'is an empty diff tag if there are no operations' do
