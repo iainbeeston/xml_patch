@@ -15,11 +15,11 @@ RSpec.describe XmlPatch::DiffBuilder do
       builder.remove('/baz/qux')
 
       expect(doc).to have_received(:<<).with(
-                       an_instance_of(XmlPatch::Operations::Remove).and(have_attributes(sel: '/foo/bar'))
-                     ).ordered
+        an_instance_of(XmlPatch::Operations::Remove).and(have_attributes(sel: '/foo/bar'))
+      ).ordered
       expect(doc).to have_received(:<<).with(
-                       an_instance_of(XmlPatch::Operations::Remove).and(have_attributes(sel: '/baz/qux'))
-                     ).ordered
+        an_instance_of(XmlPatch::Operations::Remove).and(have_attributes(sel: '/baz/qux'))
+      ).ordered
     end
   end
 
