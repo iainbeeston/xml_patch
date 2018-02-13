@@ -1,0 +1,11 @@
+AllCops:
+  Exclude: ['xml_patch.gemspec', 'bin/*', 'Rakefile', 'Gemfile', 'spec/spec_helper.rb']
+
+Style/BlockDelimiters:
+  Enabled: false
+Metrics/LineLength:
+  Enabled: false
+Metrics/BlockLength:
+  Enabled: false
+Style/Documentation:
+  Enabled: false

@@ -15,14 +15,14 @@ module XmlPatch
     end
 
     def replace(xpath, content)
-      diff_document << XmlPatch::Operations::Replace.new(sel: xpath, content: content)
+      diff_document << XmlPatch::Operations::Replace.new(sel: xpath, document: content)
     end
 
     def parse(patch)
-      patch.get_at('/diff/*') do |name, attrs|
+      patch.get_at('/diff/*') do |name, attrs, content|
         case name
         when 'remove' then remove(attrs['sel'])
-        when 'replace' then replace(attrs['sel'], attrs['content'])
+        when 'replace' then replace(attrs['sel'], content)
         end
       end
       self

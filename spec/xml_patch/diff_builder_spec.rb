@@ -29,14 +29,14 @@ RSpec.describe XmlPatch::DiffBuilder do
       doc = builder.diff_document
       allow(doc).to receive(:<<)
 
-      builder.replace('/foo/bar', 'hello world')
-      builder.replace('/baz/qux', 'fizz buzz')
+      builder.replace('/foo/bar', XmlPatch::XmlDocument.new('<fizz />'))
+      builder.replace('/baz/qux', XmlPatch::XmlDocument.new('<buzz />'))
 
       expect(doc).to have_received(:<<).with(
-        an_instance_of(XmlPatch::Operations::Replace).and(have_attributes(sel: '/foo/bar', content: 'hello world'))
+        an_instance_of(XmlPatch::Operations::Replace).and(have_attributes(sel: '/foo/bar', document: XmlPatch::XmlDocument.new('<fizz />')))
       ).ordered
       expect(doc).to have_received(:<<).with(
-        an_instance_of(XmlPatch::Operations::Replace).and(have_attributes(sel: '/baz/qux', content: 'fizz buzz'))
+        an_instance_of(XmlPatch::Operations::Replace).and(have_attributes(sel: '/baz/qux', document: XmlPatch::XmlDocument.new('<buzz />')))
       ).ordered
     end
   end
@@ -68,7 +68,7 @@ RSpec.describe XmlPatch::DiffBuilder do
       diff = XmlPatch::DiffDocument.new
 
       patch = instance_double(XmlPatch::XmlDocument)
-      allow(patch).to receive(:get_at).and_yield('foo', {})
+      allow(patch).to receive(:get_at).and_yield('foo', {}, nil)
 
       builder = described_class.new
       builder.parse(patch)
@@ -79,8 +79,8 @@ RSpec.describe XmlPatch::DiffBuilder do
     it 'calls remove for each remove tag yielded when parsing the document' do
       patch = instance_double(XmlPatch::XmlDocument)
       allow(patch).to receive(:get_at)
-        .and_yield('remove', 'sel' => '/foo/bar')
-        .and_yield('remove', 'sel' => '/baz/qux')
+        .and_yield('remove', { 'sel' => '/foo/bar' }, 'ignore me')
+        .and_yield('remove', { 'sel' => '/baz/qux' }, 'ignore me too')
 
       builder = described_class.new
       allow(builder).to receive(:remove)
@@ -94,8 +94,8 @@ RSpec.describe XmlPatch::DiffBuilder do
     it 'calls replace for each remove tag yielded when parsing the document' do
       patch = instance_double(XmlPatch::XmlDocument)
       allow(patch).to receive(:get_at)
-        .and_yield('replace', 'sel' => '/foo/bar', 'content' => 'hello world')
-        .and_yield('replace', 'sel' => '/baz/qux', 'content' => 'fizz buzz')
+        .and_yield('replace', { 'sel' => '/foo/bar' }, 'hello world')
+        .and_yield('replace', { 'sel' => '/baz/qux' }, 'fizz buzz')
 
       builder = described_class.new
       allow(builder).to receive(:replace)

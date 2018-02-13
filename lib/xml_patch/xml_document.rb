@@ -13,12 +13,16 @@ module XmlPatch
     end
 
     def remove_at!(xpath)
+      raise(RuntimeError, "can't modify frozen #{self.class.name}") if frozen?
+
       nodes_at(xpath).each { |n| remove_node(n) }
 
       self
     end
 
     def replace_at!(xpath, content)
+      raise(RuntimeError, "can't modify frozen #{self.class.name}") if frozen?
+
       nodes_at(xpath).each { |n| replace_node(n, content) }
 
       self
@@ -27,7 +31,7 @@ module XmlPatch
     def get_at(xpath)
       if block_given?
         nodes_at(xpath).each do |n|
-          yield(n.name, node_attributes(n), document_from_nodes(n.children))
+          yield(n.name, node_attributes(n), n.children.any? ? document_from_nodes(n.children) : nil)
         end
       end
 
@@ -44,14 +48,13 @@ module XmlPatch
       raise XmlPatch::Errors::InvalidXml, e.message
     end
 
-    def document_from_nodes(node)
-      self.class.new(
-        Oga::XML::Document.new(
-          doctype: xml_dom.doctype,
-          xml_declaration: xml_dom.xml_declaration,
-          children: node
-        )
+    def document_from_nodes(nodes)
+      oga_document = Oga::XML::Document.new(
+        doctype: xml_dom.doctype,
+        xml_declaration: xml_dom.xml_declaration,
+        children: nodes.to_a
       )
+      self.class.new(oga_document)
     end
 
     def remove_node(node)

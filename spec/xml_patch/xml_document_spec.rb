@@ -92,6 +92,14 @@ RSpec.describe XmlPatch::XmlDocument do
         }.to raise_error(XmlPatch::Errors::InvalidXpath)
       end
     end
+
+    it 'raises an error if the object is frozen' do
+      doc = described_class.new('<foo><bar /></foo>')
+      doc.freeze
+      expect {
+        doc.remove_at!('/foo/bar')
+      }.to raise_error(RuntimeError).with_message("can't modify frozen XmlPatch::XmlDocument")
+    end
   end
 
   describe 'replace_at!' do
@@ -195,6 +203,14 @@ RSpec.describe XmlPatch::XmlDocument do
         doc.replace_at!('/foo/bar/text()[3]', 'fizz buzz')
         expect(doc.to_xml).to eq('<foo><bar>hello <baz /> world</bar></foo>')
       end
+    end
+
+    it 'raises an error if the object is frozen' do
+      doc = described_class.new('<foo><bar /></foo>')
+      doc.freeze
+      expect {
+        doc.replace_at!('/foo/bar', XmlPatch::XmlDocument.new('<baz />'))
+      }.to raise_error(RuntimeError).with_message("can't modify frozen XmlPatch::XmlDocument")
     end
   end
 

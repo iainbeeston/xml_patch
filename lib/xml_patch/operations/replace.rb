@@ -1,15 +1,15 @@
 module XmlPatch
   module Operations
     class Replace
-      attr_reader :sel, :content
+      attr_reader :sel, :document
 
-      def initialize(sel:, content:)
+      def initialize(sel:, document:)
         @sel = sel.dup.freeze
-        @content = content.dup.freeze
+        @document = document.dup.freeze
       end
 
       def apply_to(doc)
-        doc.replace_at!(sel, content)
+        doc.replace_at!(sel, document)
         doc
       end
 
@@ -18,8 +18,8 @@ module XmlPatch
           other.operation == operation &&
           other.respond_to?(:sel) &&
           other.sel == sel &&
-          other.respond_to?(:content) &&
-          other.content == content
+          other.respond_to?(:document) &&
+          other.document == document
       end
 
       def operation
@@ -27,7 +27,7 @@ module XmlPatch
       end
 
       def to_xml
-        %(<replace sel="#{sel}">#{content}</replace>)
+        %(<replace sel="#{sel}">#{document.to_xml}</replace>)
       end
     end
   end
